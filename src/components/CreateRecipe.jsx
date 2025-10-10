@@ -1,24 +1,24 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { createPost } from '../api/posts.js'
+import { createRecipe } from '../api/recipes.js'
 import { useAuth } from '../contexts/AuthContext.jsx'
 
-export function CreatePost() {
+export function CreateRecipe() {
   const [token] = useAuth()
   const [title, setTitle] = useState('')
   const [contents, setContents] = useState('')
   const queryClient = useQueryClient()
 
-  const createPostMutation = useMutation({
-    mutationFn: () => createPost(token, { title, contents }),
-    onSuccess: () => queryClient.invalidateQueries(['posts']),
+  const createRecipeMutation = useMutation({
+    mutationFn: () => createRecipe(token, { title, contents }),
+    onSuccess: () => queryClient.invalidateQueries(['recipes']),
   })
   const handleSubmit = (e) => {
     e.preventDefault()
-    createPostMutation.mutate()
+    createRecipeMutation.mutate()
   }
 
-  if (!token) return <div>Please log in to create new posts.</div>
+  if (!token) return <div>Please log in to create new recipes.</div>
 
   return (
     <form onSubmit={handleSubmit}>
@@ -42,13 +42,13 @@ export function CreatePost() {
       <br />
       <input
         type='submit'
-        value={createPostMutation.isPending ? 'Creating...' : 'Create'}
-        disabled={!title || createPostMutation.isPending}
+        value={createRecipeMutation.isPending ? 'Creating...' : 'Create'}
+        disabled={!title || createRecipeMutation.isPending}
       />
-      {createPostMutation.isSuccess ? (
+      {createRecipeMutation.isSuccess ? (
         <>
           <br />
-          Post created successfully!
+          Recipe created successfully!
         </>
       ) : null}
     </form>

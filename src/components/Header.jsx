@@ -18,7 +18,7 @@ export function Header() {
 
   return (
     <div>
-      <h1>Welcome To My Blog!</h1>
+      <h1>Welcome To Rockin Recipes!</h1>
       <Link to='/login'>Log In</Link> | <Link to='/signup'>Sign Up</Link>
     </div>
   )

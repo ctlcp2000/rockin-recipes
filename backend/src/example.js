@@ -1,17 +1,17 @@
 import { initDatabase } from './db/init.js'
-import { Post } from './db/models/post.js'
+import { Recipe } from './db/models/recipe.js'
 
 await initDatabase()
-const post = new Post({
+const recipe = new Recipe({
   title: 'Hello Mongoose!',
   author: 'Daniel Bugl',
-  contents: 'This post is stored in a MongoDB database using Mongoose.',
+  contents: 'This recipe is stored in a MongoDB database using Mongoose.',
   tags: ['mongoose', 'mongodb'],
 })
 
-const createdPost = await post.save()
-await Post.findByIdAndUpdate(createdPost._id, {
+const createdRecipe = await recipe.save()
+await Recipe.findByIdAndUpdate(createdRecipe._id, {
   $set: { title: 'Hello again, Mongoose!' },
 })
-const posts = await Post.find()
-console.log(posts)
+const recipes = await Recipe.find()
+console.log(recipes)

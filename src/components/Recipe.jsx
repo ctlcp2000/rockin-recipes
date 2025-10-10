@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { User } from './User.jsx'
 
-export function Post({ title, contents, author }) {
+export function Recipe({ title, contents, author }) {
   return (
     <article>
       <h3>{title}</h3>
@@ -17,7 +17,7 @@ export function Post({ title, contents, author }) {
   )
 }
 
-Post.propTypes = {
+Recipe.propTypes = {
   title: PropTypes.string.isRequired,
   contents: PropTypes.string,
   author: PropTypes.string,

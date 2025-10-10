@@ -1,6 +1,6 @@
 import express from 'express'
-import { createPost, updatePost, deletePost } from './services/posts.js'
-import { postsRoutes } from './routes/posts.js'
+import { createRecipe, updateRecipe, deleteRecipe } from './services/recipes.js'
+import { recipeRoutes } from './routes/recipes.js'
 import { userRoutes } from './routes/users.js'
 import bodyParser from 'body-parser'
 import cors from 'cors'
@@ -8,40 +8,40 @@ import cors from 'cors'
 const app = express()
 app.use(cors())
 app.use(bodyParser.json())
-postsRoutes(app)
+recipeRoutes(app)
 userRoutes(app)
 
 app.get('/', (req, res) => {
   res.send('Hello from Express!')
 })
 
-app.post('/api/v1/posts', async (req, res) => {
+app.post('/api/v1/recipes', async (req, res) => {
   try {
-    const post = await createPost(req.body)
-    return res.json(post)
+    const recipe = await createRecipe(req.body)
+    return res.json(recipe)
   } catch (err) {
-    console.error('error creating post', err)
+    console.error('error creating recipe', err)
     return res.status(500).end()
   }
 })
 
-app.patch('/api/v1/posts/:id', async (req, res) => {
+app.patch('/api/v1/recipes/:id', async (req, res) => {
   try {
-    const post = await updatePost(req.params.id, req.body)
-    return res.json(post)
+    const recipe = await updateRecipe(req.params.id, req.body)
+    return res.json(recipe)
   } catch (err) {
-    console.error('error updating post', err)
+    console.error('error updating recipe', err)
     return res.status(500).end()
   }
 })
 
-app.delete('/api/v1/posts/:id', async (req, res) => {
+app.delete('/api/v1/recipe/:id', async (req, res) => {
   try {
-    const { deletedCount } = await deletePost(req.params.id)
+    const { deletedCount } = await deleteRecipe(req.params.id)
     if (deletedCount === 0) return res.sendStatus(404)
     return res.status(204).end()
   } catch (err) {
-    console.error('error deleting post', err)
+    console.error('error deleting recipe', err)
     return res.status(500).end()
   }
 })

@@ -1,22 +1,22 @@
-import { PostList } from '../components/PostList.jsx'
-import { CreatePost } from '../components/CreatePost.jsx'
-import { PostFilter } from '../components/PostFilter.jsx'
-import { PostSorting } from '../components/PostSorting.jsx'
+import { RecipeList } from '../components/RecipeList.jsx'
+import { CreateRecipe } from '../components/CreateRecipe.jsx'
+import { RecipeFilter } from '../components/RecipeFilter.jsx'
+import { RecipeSorting } from '../components/RecipeSorting.jsx'
 import { useQuery } from '@tanstack/react-query'
-import { getPosts } from '../api/posts.js'
+import { getRecipes } from '../api/recipes.js'
 import { useState } from 'react'
 import { Header } from '../components/Header.jsx'
 
-export function Blog() {
+export function RecipeShare() {
   const [author, setAuthor] = useState('')
   const [sortBy, setSortBy] = useState('createdAt')
   const [sortOrder, setSortOrder] = useState('descending')
 
-  const postsQuery = useQuery({
-    queryKey: ['posts', { author, sortBy, sortOrder }],
-    queryFn: () => getPosts({ author, sortBy, sortOrder }),
+  const recipesQuery = useQuery({
+    queryKey: ['recipes', { author, sortBy, sortOrder }],
+    queryFn: () => getRecipes({ author, sortBy, sortOrder }),
   })
-  const posts = postsQuery.data ?? []
+  const recipes = recipesQuery.data ?? []
 
   return (
     <div style={{ padding: 8 }}>
@@ -24,17 +24,17 @@ export function Blog() {
       <br />
       <hr />
       <br />
-      <CreatePost />
+      <CreateRecipe />
       <br />
       <hr />
       Filter by:
-      <PostFilter
+      <RecipeFilter
         field='author'
         value={author}
         onChange={(value) => setAuthor(value)}
       />
       <br />
-      <PostSorting
+      <RecipeSorting
         fields={['createdAt', 'updatedAt']}
         value={sortBy}
         onChange={(value) => setSortBy(value)}
@@ -42,7 +42,7 @@ export function Blog() {
         onOrderChange={(orderValue) => setSortOrder(orderValue)}
       />
       <hr />
-      <PostList posts={posts} />
+      <RecipeList recipes={recipes} />
     </div>
   )
 }
