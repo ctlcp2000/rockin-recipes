@@ -6,11 +6,12 @@ import { useAuth } from '../contexts/AuthContext.jsx'
 export function CreateRecipe() {
   const [token] = useAuth()
   const [title, setTitle] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
   const [contents, setContents] = useState('')
   const queryClient = useQueryClient()
 
   const createRecipeMutation = useMutation({
-    mutationFn: () => createRecipe(token, { title, contents }),
+    mutationFn: () => createRecipe(token, { title, contents, imageUrl }),
     onSuccess: () => queryClient.invalidateQueries(['recipes']),
   })
   const handleSubmit = (e) => {
@@ -23,7 +24,7 @@ export function CreateRecipe() {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor='create-title'>Title: </label>
+        <label htmlFor='create-title'>Recipe Title: </label>
 
         <input
           type='text'
@@ -32,7 +33,18 @@ export function CreateRecipe() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+        <br />
+        <br />
       </div>
+      <label htmlFor='create-image-url'>Recipe Image Url: </label>
+      <input
+        type='text'
+        name='create-image-url'
+        id='create-image-url'
+        value={imageUrl}
+        onChange={(e) => setImageUrl(e.target.value)}
+      />
+      <br />
       <br />
       <textarea
         value={contents}

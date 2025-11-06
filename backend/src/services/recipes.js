@@ -1,8 +1,11 @@
 import { Recipe } from '../db/models/recipe.js'
 import { User } from '../db/models/user.js'
 
-export async function createRecipe(userId, { title, contents, tags }) {
-  const recipe = new Recipe({ title, author: userId, contents, tags })
+export async function createRecipe(
+  userId,
+  { title, contents, tags, imageUrl },
+) {
+  const recipe = new Recipe({ title, author: userId, contents, tags, imageUrl })
   return await recipe.save()
 }
 
@@ -34,11 +37,11 @@ export async function getRecipeById(recipeId) {
 export async function updateRecipe(
   userId,
   recipeId,
-  { title, contents, tags },
+  { title, contents, tags, imageUrl, likes },
 ) {
   return await Recipe.findOneAndUpdate(
     { _id: recipeId, author: userId },
-    { $set: { title, contents, tags } },
+    { $set: { title, contents, tags, imageUrl, likes } },
     { new: true },
   )
 }
