@@ -31,3 +31,8 @@ export const toggleLike = async (token, { _id, likingUserId }) => {
   const res = await fetch(url, req)
   return await res.json()
 }
+
+export const getRecipeById = async (recipeId) => {
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/recipes/${recipeId}`)
+  return await res.json()
+}

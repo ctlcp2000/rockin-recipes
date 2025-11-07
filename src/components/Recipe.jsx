@@ -5,7 +5,8 @@ import { toggleLike } from '../api/recipes.js'
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import { jwtDecode } from 'jwt-decode'
-
+import slug from 'slug'
+import { Link } from 'react-router-dom'
 
 
 export function Recipe({_id, title, contents, author, imageUrl, likes }) {
@@ -25,7 +26,9 @@ export function Recipe({_id, title, contents, author, imageUrl, likes }) {
     return (
       <article>
         {/* <div>{token.user.id}</div> */}
-        <h3>{title}</h3>
+        <Link to={`/recipes/${_id}/${slug(title)}`}>
+          <h3>{title}</h3>
+        </Link>
         {imageUrl != null && imageUrl != '' ? <img src={imageUrl} alt={title} /> : ""}
         <div>{contents}</div>
 
@@ -40,7 +43,7 @@ export function Recipe({_id, title, contents, author, imageUrl, likes }) {
             <br />
             <div>Likes: {likes.length}</div>
                 <form onSubmit={handleSubmit}>
-                    <button type="submit" onClick={() => setLikes(jwtDecode(token).sub)}>{likes.includes(author) ? 'Dislike' : 'Like'}</button>
+                    <button type="submit" disabled={!token} onClick={() => setLikes(jwtDecode(token).sub)}>{likes.includes(author) ? 'Remove Like' : 'Like'}</button>
                 </form>
           </em>
         )}

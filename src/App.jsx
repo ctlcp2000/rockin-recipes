@@ -1,9 +1,19 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RecipeShare } from './pages/RecipeShare.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Signup } from './pages/Signup.jsx'
 import { AuthContextProvider } from './contexts/AuthContext.jsx'
 import { Login } from './pages/Login.jsx'
+import { getRecipes, getRecipeById } from './api/recipes.js'
+import { ViewRecipe } from './pages/ViewRecipe.jsx'
+import {
+  QueryClient,
+  QueryClientProvider,
+  dehydrate,
+  HydrationBoundary,
+} from '@tanstack/react-query'
+import { getUserInfo } from './api/users.js'
+import { useLoaderData } from "react-router";
+
 
 const queryClient = new QueryClient()
 export function App() {
@@ -19,7 +29,35 @@ export function App() {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <RecipeShare />,
+    loader: async () => {
+      const queryClient = new QueryClient()
+      const author = ''
+      const sortBy = 'createdAt'
+      const sortOrder = 'descending'
+      const recipes = await getRecipes({ author, sortBy, sortOrder })
+      await queryClient.prefetchQuery({
+        queryKey: ['recipes', { author, sortBy, sortOrder }],
+        queryFn: () => recipes,
+      })
+      const uniqueAuthors = recipes
+        .map((recipe) => recipe.author)
+        .filter((value, index, array) => array.indexOf(value) === index)
+      for (const userId of uniqueAuthors) {
+        await queryClient.prefetchQuery({
+          queryKey: ['users', userId],
+          queryFn: () => getUserInfo(userId),
+        })
+      }
+      return dehydrate(queryClient)
+    },
+    Component() {
+      const dehydratedState = useLoaderData()
+      return (
+        <HydrationBoundary state={dehydratedState}>
+          <RecipeShare />
+        </HydrationBoundary>
+      )
+    },
   },
   {
     path: '/signup',
@@ -29,4 +67,32 @@ const router = createBrowserRouter([
     path: '/login',
     element: <Login />,
   },
+  {
+    path: '/recipes/:recipeId/:slug?',
+    loader: async ({ params }) => {
+      const recipeId = params.recipeId
+      const queryClient = new QueryClient()
+      const recipe = await getRecipeById(recipeId)
+      await queryClient.prefetchQuery({
+        queryKey: ['recipe', recipeId],
+        queryFn: () => recipe,
+      })
+      if (recipe?.author) {
+        await queryClient.prefetchQuery({
+          queryKey: ['users', recipe.author],
+          queryFn: () => getUserInfo(recipe.author),
+        })
+      }
+      return { dehydratedState: dehydrate(queryClient), recipeId }
+    },
+
+    Component() {
+      const { dehydratedState, recipeId } = useLoaderData()
+      return (
+        <HydrationBoundary state={dehydratedState}>
+          <ViewRecipe recipeId={recipeId} />
+        </HydrationBoundary>
+      )
+    },
+  }
 ])
