@@ -6,6 +6,7 @@ import {
   deleteRecipe,
   updateRecipe,
   createRecipe,
+  toggleLike
 } from '../services/recipes.js'
 import { requireAuth } from '../middleware/jwt.js'
 
@@ -53,7 +54,7 @@ export function recipeRoutes(app) {
     }
   })
 
-  app.patch('/api/v1/recipe/:id', requireAuth, async (req, res) => {
+  app.patch('/api/v1/recipes/:id', requireAuth, async (req, res) => {
     try {
       const recipe = await updateRecipe(req.auth.sub, req.params.id, req.body)
       return res.json(recipe)
@@ -63,7 +64,17 @@ export function recipeRoutes(app) {
     }
   })
 
-  app.delete('/api/v1/recipe/:id', requireAuth, async (req, res) => {
+  app.patch('/api/v1/recipes/like', requireAuth, async (req, res) => {
+    try {
+      const recipe = await toggleLike(req.body._id, req.body.likingUserId)
+      return res.json(recipe)
+    } catch (err) {
+      console.error('error liking recipe', err)
+      return res.status(500).end()
+    }
+  })
+
+  app.delete('/api/v1/recipes/:id', requireAuth, async (req, res) => {
     try {
       const { deletedCount } = await deleteRecipe(req.auth.sub, req.params.id)
       if (deletedCount === 0) return res.sendStatus(404)

@@ -7,6 +7,7 @@ const recipeSchema = new Schema(
     contents: String,
     tags: [String],
     imageUrl: String,
+    likes: [String],
   },
   { timestamps: true },
 )

@@ -3,10 +3,23 @@ import { User } from '../db/models/user.js'
 
 export async function createRecipe(
   userId,
-  { title, contents, tags, imageUrl },
+  { title, contents, tags, imageUrl, likes },
 ) {
-  const recipe = new Recipe({ title, author: userId, contents, tags, imageUrl })
+  const recipe = new Recipe({ title, author: userId, contents, tags, imageUrl, likes })
   return await recipe.save()
+}
+
+export async function toggleLike(
+  _id, likingUserId
+) {
+  const existingRecipe = await getRecipeById(_id)
+  const newLikes = existingRecipe.includes(likingUserId) ? existingRecipe.likes.filter(item => item !== likingUserId) : existingRecipe.likes.push(likingUserId)
+
+  return await Recipe.findOneAndUpdate(
+    { _id: _id },
+    { $set: { likes: newLikes } },
+    { new: true },
+  )
 }
 
 async function listRecipes(
