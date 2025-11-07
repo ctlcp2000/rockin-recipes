@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { User } from './User.jsx'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toggleLike } from '../api/recipes.js'
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext.jsx'
@@ -11,6 +11,8 @@ import { jwtDecode } from 'jwt-decode'
 export function Recipe({_id, title, contents, author, imageUrl, likes }) {
   const [likingUserId, setLikes] = useState('')
   const [token] = useAuth()
+  const queryClient = useQueryClient()
+
   const likeRecipeMutation = useMutation({
     mutationFn: () => toggleLike(token, { _id, likingUserId} ),
     onSuccess: () => queryClient.invalidateQueries(['recipes']),
@@ -38,7 +40,7 @@ export function Recipe({_id, title, contents, author, imageUrl, likes }) {
             <br />
             <div>Likes: {likes.length}</div>
                 <form onSubmit={handleSubmit}>
-                    <button type="submit" onClick={(e) => setLikes(jwtDecode(token).sub)}>{likes.includes(author) ? 'Dislike' : 'Like'}</button>
+                    <button type="submit" onClick={() => setLikes(jwtDecode(token).sub)}>{likes.includes(author) ? 'Dislike' : 'Like'}</button>
                 </form>
           </em>
         )}
@@ -51,5 +53,6 @@ Recipe.propTypes = {
   contents: PropTypes.string,
   author: PropTypes.string,
   imageUrl: PropTypes.string,
-  likes: PropTypes.array
+  likes: PropTypes.array,
+  _id: PropTypes.string
 }

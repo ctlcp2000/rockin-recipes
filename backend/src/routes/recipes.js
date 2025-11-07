@@ -64,7 +64,7 @@ export function recipeRoutes(app) {
     }
   })
 
-  app.patch('/api/v1/recipes/like', requireAuth, async (req, res) => {
+  app.patch('/api/v1/recipes', requireAuth, async (req, res) => {
     try {
       const recipe = await toggleLike(req.body._id, req.body.likingUserId)
       return res.json(recipe)

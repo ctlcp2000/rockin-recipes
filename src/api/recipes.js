@@ -19,7 +19,7 @@ export const createRecipe = async (token, recipe) => {
 }
 
 export const toggleLike = async (token, { _id, likingUserId }) => {
-  const url = `${import.meta.env.VITE_BACKEND_URL}/recipes/like`
+  const url = `${import.meta.env.VITE_BACKEND_URL}/recipes`
   const req = {
     method: 'PATCH',
     headers: {
