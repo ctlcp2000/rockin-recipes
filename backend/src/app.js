@@ -1,5 +1,10 @@
 import express from 'express'
-import { createRecipe, updateRecipe, deleteRecipe } from './services/recipes.js'
+import {
+  createRecipe,
+  updateRecipe,
+  deleteRecipe,
+  toggleLike,
+} from './services/recipes.js'
 import { recipeRoutes } from './routes/recipes.js'
 import { userRoutes } from './routes/users.js'
 import bodyParser from 'body-parser'
@@ -35,7 +40,17 @@ app.patch('/api/v1/recipes/:id', async (req, res) => {
   }
 })
 
-app.delete('/api/v1/recipe/:id', async (req, res) => {
+app.patch('/api/v1/recipes/like', async (req, res) => {
+  try {
+    const recipe = await toggleLike(req.body)
+    return res.json(recipe)
+  } catch (err) {
+    console.error('error liking recipe', err)
+    return res.status(500).end()
+  }
+})
+
+app.delete('/api/v1/recipes/:id', async (req, res) => {
   try {
     const { deletedCount } = await deleteRecipe(req.params.id)
     if (deletedCount === 0) return res.sendStatus(404)

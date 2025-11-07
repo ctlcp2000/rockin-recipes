@@ -18,16 +18,16 @@ export const createRecipe = async (token, recipe) => {
   return await res.json()
 }
 
-export const toggleLike = async (token, {_id, likingUserId}) => {
+export const toggleLike = async (token, { _id, likingUserId }) => {
+  const url = `${import.meta.env.VITE_BACKEND_URL}/recipes/like`
   const req = {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: {_id, likingUserId}
+    body: JSON.stringify({ _id, likingUserId }),
   }
-  console.log(req)
-  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/recipes/like`, req)
+  const res = await fetch(url, req)
   return await res.json()
 }

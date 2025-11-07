@@ -8,6 +8,7 @@ import {
   getRecipeById,
   updateRecipe,
   deleteRecipe,
+  toggleLike,
 } from '../services/recipes.js'
 import { Recipe } from '../db/models/recipe.js'
 import { createUser } from '../services/users.js'
@@ -168,5 +169,20 @@ describe('deleting recipes', () => {
   test('should fail if the id does not exist', async () => {
     const result = await deleteRecipe('000000000000000000000000')
     expect(result.deletedCount).toEqual(0)
+  })
+})
+
+describe('like a recipe', () => {
+  test('should like a recipe', async () => {
+    const likes = createdSampleRecipes[0].likes
+    const recipe = await toggleLike(
+      createdSampleRecipes[0]._id,
+      '690d22117a19b3c22b6223f9',
+    )
+    expect(recipe.likes != likes)
+  })
+  test('should fail if the id does not exist', async () => {
+    const recipe = await getRecipeById('000000000000000000000000')
+    expect(recipe).toEqual(null)
   })
 })
