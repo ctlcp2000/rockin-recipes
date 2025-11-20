@@ -2,6 +2,7 @@ import { RecipeShare } from './pages/RecipeShare.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Signup } from './pages/Signup.jsx'
 import { AuthContextProvider } from './contexts/AuthContext.jsx'
+import { io } from 'socket.io-client'
 import { Login } from './pages/Login.jsx'
 import { getRecipes, getRecipeById } from './api/recipes.js'
 import { ViewRecipe } from './pages/ViewRecipe.jsx'
@@ -12,9 +13,9 @@ import {
   HydrationBoundary,
 } from '@tanstack/react-query'
 import { getUserInfo } from './api/users.js'
-import { useLoaderData } from "react-router";
+import { useLoaderData } from 'react-router'
 
-
+const socket = io(import.meta.env.VITE_SOCKET_HOST)
 const queryClient = new QueryClient()
 export function App() {
   return (
@@ -94,5 +95,18 @@ const router = createBrowserRouter([
         </HydrationBoundary>
       )
     },
-  }
+  },
 ])
+socket.on('connect', () => {
+  console.log('connected to socket.io as', socket.id)
+  socket.emit(
+    'chat.message',
+    new URLSearchParams(window.location.search).get('mymsg'),
+  )
+})
+socket.on('connect_error', (err) => {
+  console.error('socket.io connect error:', err)
+})
+socket.on('chat.message', (msg) => {
+  console.log(`${msg.username}: ${msg.message}`)
+})
