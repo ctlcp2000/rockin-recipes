@@ -2,7 +2,8 @@ import { RecipeShare } from './pages/RecipeShare.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Signup } from './pages/Signup.jsx'
 import { AuthContextProvider } from './contexts/AuthContext.jsx'
-import { io } from 'socket.io-client'
+// import { io } from 'socket.io-client'
+import { SocketIOContextProvider } from './contexts/SocketIOContext.jsx'
 import { Login } from './pages/Login.jsx'
 import { getRecipes, getRecipeById } from './api/recipes.js'
 import { ViewRecipe } from './pages/ViewRecipe.jsx'
@@ -14,14 +15,23 @@ import {
 } from '@tanstack/react-query'
 import { getUserInfo } from './api/users.js'
 import { useLoaderData } from 'react-router'
+// import { Chat } from './pages/Chat.jsx'
 
-const socket = io(import.meta.env.VITE_SOCKET_HOST)
+// const socket = io(import.meta.env.VITE_SOCKET_HOST, {
+//   query: 'room=' + new URLSearchParams(window.location.search).get('room'),
+//   auth: {
+//     token: new URLSearchParams(window.location.search).get('token'),
+//   },
+// })
+
 const queryClient = new QueryClient()
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <SocketIOContextProvider>
+          <RouterProvider router={router} />
+        </SocketIOContextProvider>
       </AuthContextProvider>
     </QueryClientProvider>
   )
@@ -97,16 +107,18 @@ const router = createBrowserRouter([
     },
   },
 ])
-socket.on('connect', () => {
-  console.log('connected to socket.io as', socket.id)
-  socket.emit(
-    'chat.message',
-    new URLSearchParams(window.location.search).get('mymsg'),
-  )
-})
-socket.on('connect_error', (err) => {
-  console.error('socket.io connect error:', err)
-})
-socket.on('chat.message', (msg) => {
-  console.log(`${msg.username}: ${msg.message}`)
-})
+// socket.on('connect', async () => {
+//   console.log('connected to socket.io as', socket.id)
+//   socket.emit(
+//     'chat.message',
+//     new URLSearchParams(window.location.search).get('mymessage'),
+//   )
+//   const userInfo = await socket.emitWithAck('user.info', socket.id)
+//   console.log('user info', userInfo)
+// })
+// socket.on('connect_error', (err) => {
+//   console.error('socket.io connect error:', err)
+// })
+// socket.on('chat.message', (msg) => {
+//   console.log(`${msg.username}: ${msg.message}`)
+// })
