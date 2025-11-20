@@ -8,14 +8,13 @@ import { jwtDecode } from 'jwt-decode'
 import slug from 'slug'
 import { Link } from 'react-router-dom'
 
-
-export function Recipe({_id, title, contents, author, imageUrl, likes }) {
+export function Recipe({ _id, title, contents, author, imageUrl, likes }) {
   const [likingUserId, setLikes] = useState('')
   const [token] = useAuth()
   const queryClient = useQueryClient()
 
   const likeRecipeMutation = useMutation({
-    mutationFn: () => toggleLike(token, { _id, likingUserId} ),
+    mutationFn: () => toggleLike(token, { _id, likingUserId }),
     onSuccess: () => queryClient.invalidateQueries(['recipes']),
   })
   const handleSubmit = (e) => {
@@ -23,32 +22,43 @@ export function Recipe({_id, title, contents, author, imageUrl, likes }) {
     likeRecipeMutation.mutate()
   }
 
-    return (
-      <article>
-        {/* <div>{token.user.id}</div> */}
-        <Link to={`/recipes/${_id}/${slug(title)}`}>
-          <h3>{title}</h3>
-        </Link>
-        {imageUrl != null && imageUrl != '' ? <img src={imageUrl} alt={title} /> : ""}
-        <div>{contents}</div>
+  return (
+    <article>
+      {/* <div>{token.user.id}</div> */}
+      <Link to={`/recipes/${_id}/${slug(title)}`}>
+        <h3>{title}</h3>
+      </Link>
+      {imageUrl != null && imageUrl != '' ? (
+        <img src={imageUrl} alt={title} />
+      ) : (
+        ''
+      )}
+      <div>{contents}</div>
 
-        {author && (
-          <em>
-            <br />
-            Written by <User id={author} />
-          </em>
-        )}
-        {likes && (
-          <em>
-            <br />
-            <div>Likes: {likes.length}</div>
-                <form onSubmit={handleSubmit}>
-                    <button type="submit" disabled={!token} onClick={() => setLikes(jwtDecode(token).sub)}>{likes.includes(author) ? 'Remove Like' : 'Like'}</button>
-                </form>
-          </em>
-        )}
-      </article>
-    )
+      {author && (
+        <em>
+          <br />
+          Written by <User id={author} />
+        </em>
+      )}
+      {likes && (
+        <em>
+          <br />
+          <div>Likes: {likes.length}</div>
+          <form onSubmit={handleSubmit}>
+            <button
+              type='submit'
+              disabled={!token}
+              onClick={() => setLikes(jwtDecode(token).sub)}
+            >
+              {' '}
+              Toggle Like{' '}
+            </button>
+          </form>
+        </em>
+      )}
+    </article>
+  )
 }
 
 Recipe.propTypes = {
@@ -57,5 +67,5 @@ Recipe.propTypes = {
   author: PropTypes.string,
   imageUrl: PropTypes.string,
   likes: PropTypes.array,
-  _id: PropTypes.string
+  _id: PropTypes.string,
 }
