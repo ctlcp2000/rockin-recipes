@@ -25,6 +25,7 @@ const io = new Server(server, {
     origin: '*',
   },
 })
+app.set('io', io);
 handleSocket(io)
 // io.on('connection', (socket) => {
 //   console.log('user connected:', socket.id)

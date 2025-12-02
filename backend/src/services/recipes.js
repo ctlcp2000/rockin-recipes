@@ -1,7 +1,9 @@
 import { Recipe } from '../db/models/recipe.js'
 import { User } from '../db/models/user.js'
 
+
 export async function createRecipe(
+  io,
   userId,
   { title, contents, tags, imageUrl, likes },
 ) {
@@ -13,7 +15,9 @@ export async function createRecipe(
     imageUrl,
     likes,
   })
-  return await recipe.save()
+  const retRecipe = await recipe.save()
+  io.emit('notification.message', recipe)
+  return retRecipe
 }
 
 export async function toggleLike(_id, likingUserId) {
