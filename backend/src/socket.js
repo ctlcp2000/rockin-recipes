@@ -1,17 +1,8 @@
 import jwt from 'jsonwebtoken'
 import { getUserInfoById } from './services/users.js'
-// import { createMessage, getMessagesByRoom } from './services/messages.js'
-import {
-  joinRoom,
-  sendPublicMessage,
-  getUserInfoBySocketId,
-} from './services/chat.js'
+
 export function handleSocket(io) {
   io.on('connection', (socket) => {
-    joinRoom(io, socket, { room: 'public' })
-    socket.on('chat.message', (room, message) =>
-      sendPublicMessage(io, { username: socket.user.username, room, message }),
-    )
     socket.on('user.info', async (socketId, callback) =>
       callback(await getUserInfoBySocketId(io, socketId)),
     )

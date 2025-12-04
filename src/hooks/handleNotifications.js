@@ -11,7 +11,7 @@ export function handleNotifications() {
 
   function dismissNotification(){
     if (notifications.length > 0){
-    setNotifications((notifications) => notifications.slice(1))
+    setNotifications(() => [])
     }
   }
 

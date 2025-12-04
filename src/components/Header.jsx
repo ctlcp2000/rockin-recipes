@@ -4,7 +4,8 @@ import { useAuth } from '../contexts/AuthContext.jsx'
 import { User } from './User.jsx'
 import { useSocket } from '../contexts/SocketIOContext.jsx'
 import { handleNotifications } from '../hooks/handleNotifications.js'
-import slug from 'slug'
+import { Notification } from './Notification.jsx'
+
 
 export function Header() {
   const [token, setToken] = useAuth()
@@ -18,7 +19,6 @@ export function Header() {
   if (token) {
     const { sub } = jwtDecode(token)
     const { notifications, dismissNotification } = handleNotifications()
-    // TODO put notifications in their own component and build popup
     return (
       <div>
         <h1>Welcome To Rockin Recipes!</h1>
@@ -26,11 +26,12 @@ export function Header() {
         <br />
         <br />
         <button onClick={handleLogout}>Logout</button> 
-        {notifications.map((recipe) => (
-            <Link to={`/recipes/${recipe._id}/${slug(recipe.title)}`}>
-              <h3>Click here to see the new recipe: {recipe.title}</h3>
-            </Link>
-        ))}
+        {(notifications.length > 0 && notifications[0].author != sub) && (
+            <Notification 
+                recipe={notifications[0]} 
+                dismissNotification={dismissNotification} 
+            />
+        )}
       </div>
     )
   }
